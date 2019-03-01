@@ -7,13 +7,16 @@ module Exhaust
     end
 
     def run
-      Timeout::timeout(30) do
+      Timeout::timeout(60) do
+
+        puts "*** Starting Emberjs app"
         while running = ember_server.gets
           if running =~ /build successful/i
             break
           end
         end
 
+        puts "*** Starting Rails app"
         while running = rails_server.gets
           puts running
           if running =~ /info/i
@@ -46,7 +49,7 @@ module Exhaust
     def ember_server
       @ember_server ||= begin
         Dir.chdir(ember_path) do
-          @ember_server = IO.popen([{"API_HOST" => "http://localhost:#{rails_port}"}, "ember", "server", "--port", ember_port, "--live-reload", "false", :err => [:child, :out]])
+          @ember_server = IO.popen([{"API_HOST" => "http://localhost:#{rails_port}"}, "npx", "ember", "server", "--port", ember_port, "--live-reload", "false", :err => [:child, :out]])
         end
       end
     end
@@ -54,7 +57,7 @@ module Exhaust
     def rails_server
       @rails_server ||= begin
         Dir.chdir(rails_path) do
-          @rails_server = IO.popen(['rails', 'server', '--port', rails_port, '--environment', 'test', :err => [:child, :out]])
+          @rails_server = IO.popen(['bundle', 'exec', 'rails', 'server', '--port', rails_port, '--environment', 'test', :err => [:child, :out]])
         end
       end
     end
