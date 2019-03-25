@@ -9,20 +9,23 @@ module Exhaust
     def run
       Timeout::timeout(120) do
 
-        puts "*** Starting Emberjs app"
+        puts "*** Emberjs app"
+        puts "--> Starting..."
         while running = ember_server.gets
           if running =~ /build successful/i
             break
           end
         end
+        puts "--> Started!"
 
-        puts "*** Starting Rails app"
+        puts "*** Rails app"
+        puts "--> Starting..."
         while running = rails_server.gets
-          puts running
-          if running =~ /info/i
+          if running =~ /Use Ctrl-C to stop/i
             break
           end
         end
+        puts "--> Started!"
       end
     end
 
@@ -63,6 +66,7 @@ module Exhaust
     end
 
     def shutdown!
+      puts "*** Shutting down: ember (#{ember_server.pid}), rails (#{rails_server.pid})"
       Process.kill(9, ember_server.pid, rails_server.pid)
     end
   end
