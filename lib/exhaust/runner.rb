@@ -7,7 +7,7 @@ module Exhaust
     end
 
     def run
-      Timeout::timeout(60) do
+      Timeout::timeout(120) do
 
         puts "*** Starting Emberjs app"
         while running = ember_server.gets
